@@ -1,0 +1,127 @@
+
+
+   using MySql.Data.MySqlClient;
+
+
+
+
+    Database Connection
+
+     internal class DatabaseConnection
+{
+    private MySqlConnection connection;
+
+    public DatabaseConnection()
+    {
+        string connectionString = "Server=127.0.0.1;Database=InventoryDB;Uid=root;Pwd=Vxymai54786666@;";
+        connection = new MySqlConnection(connectionString);
+    }
+
+    public MySqlConnection GetConnection()
+    {
+        return connection;
+    }
+}
+
+
+
+
+     
+
+  Insert Code
+
+
+  int productid = int.Parse(textBox1.Text);
+string productname = textBox2.Text;
+int price = int.Parse(textBox3.Text);
+int quantity = int.Parse(textBox4.Text);
+
+string query = "INSERT INTO Products (ProductId, ProductName, Price, Quantity) VALUES (@ProductId, @ProductName, @Price, @Quantity)";
+using (MySqlConnection conn = new DatabaseConnection().GetConnection())
+{
+    conn.Open();
+    using (MySqlCommand cmd = new MySqlCommand(query, conn))
+    {
+        cmd.Parameters.AddWithValue("@ProductId", productid);
+        cmd.Parameters.AddWithValue("@ProductName", productname);
+        cmd.Parameters.AddWithValue("@Price", price);
+        cmd.Parameters.AddWithValue("@Quantity", quantity);
+        cmd.ExecuteNonQuery();
+    }
+}
+MessageBox.Show("Record Inserted Successfully");
+ProductLoad();
+
+
+
+
+   Product Load Code
+
+
+   string query = "SELECT * FROM Products";
+using (MySqlConnection conn = new DatabaseConnection().GetConnection())
+{
+    conn.Open();
+    using (MySqlCommand cmd = new MySqlCommand(query, conn))
+    {
+        using (MySqlDataAdapter adapter = new MySqlDataAdapter(cmd))
+        {
+            DataTable dataTable = new DataTable();
+            adapter.Fill(dataTable);
+            dataGridView1.DataSource = dataTable;
+        }
+    }
+}
+
+
+
+  Update Code
+
+  int productid = int.Parse(textBox1.Text);
+string productname = textBox2.Text;
+int price = int.Parse(textBox3.Text);
+int quantity = int.Parse(textBox4.Text);
+
+string query = "UPDATE Products SET ProductName=@ProductName, Price=@Price, Quantity=@Quantity WHERE ProductId=@ProductId";
+using (MySqlConnection conn = new DatabaseConnection().GetConnection())
+{
+    conn.Open();
+    using (MySqlCommand cmd = new MySqlCommand(query, conn))
+    {
+        cmd.Parameters.AddWithValue("@ProductId", productid);
+        cmd.Parameters.AddWithValue("@ProductName", productname);
+        cmd.Parameters.AddWithValue("@Price", price);
+        cmd.Parameters.AddWithValue("@Quantity", quantity);
+        cmd.ExecuteNonQuery();
+    }
+}
+MessageBox.Show("Record Updated Successfully");
+ProductLoad();
+
+
+
+
+
+   Delete Code
+
+    int productid = int.Parse(textBox1.Text);
+
+
+string query = "DELETE FROM Products WHERE ProductId=@ProductId";
+using (MySqlConnection conn = new DatabaseConnection().GetConnection())
+{
+    conn.Open();
+    using (MySqlCommand cmd = new MySqlCommand(query, conn))
+    {
+        cmd.Parameters.AddWithValue("@ProductId", productid);
+        
+        cmd.ExecuteNonQuery();
+    }
+}
+MessageBox.Show("Record Deleted Successfully");
+ProductLoad();
+
+
+   
+
+  
